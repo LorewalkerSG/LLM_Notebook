@@ -208,6 +208,6 @@ preds = classifier(custom_tweet,return_all_scores = True)
 preds_df  = pd.DataFrame(preds[0])
 plt.bar(labels,100*preds_df['score'],color = 'C0')
 plt.show()
-
+a = ''
 
 # %%
