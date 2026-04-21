@@ -24,8 +24,9 @@ max_position_len = 5
 # 单词索引构成的句子
 src_seq = torch.cat([torch.unsqueeze(F.pad(torch.randint(1,max_num_src_words,(L,)),(0,max_src_seq_len  - L)),0) for L in src_len])
 tgt_seq = torch.cat([torch.unsqueeze(F.pad(torch.randint(1,max_num_tgt_words,(L,)),(0,max_tgt_seq_len - L)),0) for L in tgt_len])
+print(src_seq.shape)
 
-
+# In[]
 
 # 构造embeddng
 src_embedding_table =  nn.Embedding(max_num_src_words+1,model_dim)  # 考虑pad加入了0
@@ -36,10 +37,12 @@ tgt_embedding = tgt_embedding_table(tgt_seq)
 
 
 # 构造pos emb
-
+print(src_embedding.shape)
+# In[]
 
 
 pos_mat = torch.arange(max_position_len).reshape((-1,1))
+print(pos_mat)
 i_mat = torch.pow(10000,torch.arange(0,model_dim,2).reshape((1,-1))/model_dim)
 pe_embedding_table = torch.zeros(max_position_len,model_dim)
 
