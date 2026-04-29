@@ -1,34 +1,42 @@
-import numpy as np
-import matplotlib.pyplot as plt
-from scipy.stats import norm
+# debug_proxy.py
+import os
+import socket
+import requests
 
-# 1. 生成 x 轴的数据点
-# 标准正态分布的绝大部分数据集中在 -4 到 4 之间
-x = np.linspace(-4, 4, 1000)
+PROXY_HOST = "host.docker.internal"  # 或改成宿主机局域网 IP
+PROXY_PORT = "7890"
+TEST_URL = "https://huggingface.co"
 
-# 2. 计算对应的 CDF (累积分布函数) 值
-# norm.cdf 默认就是标准正态分布 (loc=0, scale=1)
-y = norm.cdf(x)*x
+print(f"🔍 测试代理: {PROXY_HOST}:{PROXY_PORT}\n")
 
-# 3. 使用 pyplot 进行绘制
-plt.figure(figsize=(8, 5))
-plt.plot(x, y, color='#1f77b4', linewidth=2, label='CDF: $\Phi(x)$')
-plt.plot(x,0.5*x,label='0.5x')
-# 4. 图表格式化设置
-plt.title('Cumulative Distribution Function of Standard Normal Distribution')
-plt.xlabel('x')
-plt.ylabel('Cumulative Probability')
-plt.grid(True, linestyle='--', alpha=0.7)
-plt.axhline(0, color='black', linewidth=0.5) # x轴
-plt.axvline(0, color='black', linewidth=0.5) # y轴
+# 1. DNS 解析测试
+try:
+    ip = socket.gethostbyname(PROXY_HOST)
+    print(f"✅ DNS 解析: {PROXY_HOST} → {ip}")
+except Exception as e:
+    print(f"❌ DNS 解析失败: {e}")
+    PROXY_HOST = input("👉 请输入宿主机局域网 IP (如 192.168.1.100): ")
 
-# 突出显示 x=0 时，y=0.5 的关键点
-plt.scatter(0, 0.5, color='red', zorder=5)
-plt.annotate('$\Phi(0) = 0.5$', xy=(0, 0.5), xytext=(0.5, 0.4),
-             arrowprops=dict(facecolor='black', arrowstyle='->'))
+# 2. 端口连通性测试
+try:
+    sock = socket.create_connection((PROXY_HOST, int(PROXY_PORT)), timeout=3)
+    sock.close()
+    print(f"✅ 端口连通: {PROXY_HOST}:{PROXY_PORT}")
+except Exception as e:
+    print(f"❌ 端口连接失败: {e}")
+    print("💡 检查: 代理是否运行？防火墙？Docker 网络模式？")
+    exit(1)
 
-plt.legend()
-plt.tight_layout()
-
-# 5. 显示图表
-plt.show()
+# 3. 代理功能测试
+proxies = {
+    "http": f"http://{PROXY_HOST}:{PROXY_PORT}",
+    "https": f"http://{PROXY_HOST}:{PROXY_PORT}",
+}
+try:
+    resp = requests.get(TEST_URL, proxies=proxies, timeout=10)
+    print(f"✅ 代理工作正常! 状态码: {resp.status_code}")
+except requests.exceptions.ProxyError as e:
+    print(f"❌ 代理协议错误: {e}")
+    print("💡 检查: 代理是 HTTP 还是 SOCKS5？协议头写对了吗？")
+except Exception as e:
+    print(f"❌ 请求失败: {e}")

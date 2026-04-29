@@ -1,3 +1,5 @@
 **/__pycache__/
 **/distilbert-base-uncased_emotion_ft/
 **/wandb/
+**/bert_finetune/wandb/
+**/bert_finetune/distilbert-base-uncased-ft-clinc/
