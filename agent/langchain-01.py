@@ -12,7 +12,7 @@ os.environ["HTTP_PROXY"] = proxy_url
 os.environ["HTTPS_PROXY"] = proxy_url
 
 # 2. 🚨 必须填入你的真实 API KEY
-HF_TOKEN = "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"
+HF_TOKEN = ""
 os.environ["HUGGINGFACEHUB_API_TOKEN"] = HF_TOKEN
 
 from langchain_huggingface import ChatHuggingFace, HuggingFaceEndpoint
