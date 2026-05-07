@@ -3,3 +3,6 @@
 **/wandb/
 **/bert_finetune/wandb/
 **/bert_finetune/distilbert-base-uncased-ft-clinc/
+**/llm_dev/
+**/__pycache__/
+**/.env
