@@ -6,3 +6,4 @@
 **/llm_dev/
 **/__pycache__/
 **/.env
+**/langfuse/
